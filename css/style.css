@@ -1,0 +1,26 @@
+/*Default classes */
+.board{
+	
+}
+.row{
+	clear:both;
+}
+.tile{
+	float:left;
+	width:100px;
+	height:100px;
+	background-color: gray;
+	margin:2px;
+}
+.landing{
+	float:left;
+	width:100px;
+	height:100px;
+	background-color: blue;
+	margin:2px;	
+}
+
+/*Event driven classes*/
+.highlightedTile{
+	background-color:red;
+}
