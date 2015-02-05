@@ -5,12 +5,12 @@ body{
 
 /*shared settings*/
 input, div:not(.board):not(.row){
-	border: 2px solid #2e2e2e;
+	border: 0px solid #2e2e2e;
     border-radius: 8px;
 }
 img{
 	border: 0px solid #2e2e2e;
-    border-radius: 8px;
+    border-radius: 7px;
 }
 input{
 	padding:7px;
@@ -21,6 +21,7 @@ input{
 	padding-top:10px;
 	padding-bottom:10px;
 	text-align:center;
+	background-color:#b2b2b2;
 }
 
 /*setup window*/
@@ -52,6 +53,11 @@ img.player{
 	height:100px;
 	float:left;
 	z-index:20;
+	position:absolute;
+	bord
+}
+div.tile.highlightedTile{
+	box-shadow: 0px 0px 10px #2A2A2A;
 }
 
 /*question window*/

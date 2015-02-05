@@ -10,21 +10,21 @@ jQuery.noConflict();
 		
 		//setup stuff
 		bw('div.setup').click(function(){
-			console.log('create the board');
+			
 			if(bw('#player_count').val()!=''&&bw('#turn_count').val()!=''){
+				console.log('create the board');
 				//console.log(bw('#player_count').val());
 				bw('div.setup > input').fadeOut(100);
 				bw(this).slideUp();
 				buildTheBoard(bw('#player_count').val(),bw('#turn_count').val());
 				bw('div.board').show();
+				
 			}
 			return false;
 		});
 		
-		//boardstuff	
-		//conversion of board stuff
-		function playerClick(item){
-			console.log(item);
+		bw('div.board').on('click','img.player', function(event){
+			//console.log(event);
 			//console.log(e.offsetX+' '+e.offsetY);
 			console.log('down on the player');
 			//movingplayer=true;
@@ -32,27 +32,25 @@ jQuery.noConflict();
 			//console.log(e);
 			if(movingplayer==true){
 				movingplayer = false;
-				checkwhatsover(bw(this),item);
+				checkwhatsover(bw(this),event);
 			}
 			else{
+				
 				movingplayer = true;
 			}
       		//movingplayer = (movingplayer==true) ? false : true;
       		console.log(movingplayer);
       		return false;
-		}
-		function playerMouseMove(item){
+		});
+		bw('div.board').on('mousemove','img.player', function(event){
+			//console.log(event);
 			if(movingplayer){
-				bw('.movable').css({'left':(item.pageX-(bw(this).prop('offsetWidth')/2)),'top':(item.pageY-(bw(this).prop('offsetHeight')/2))});
+				bw('.movable').css({'left':(event.pageX-(bw(this).prop('offsetWidth')/2)),'top':(event.pageY-(bw(this).prop('offsetHeight')/2))});
 				//console.log(e.pageY-(bw(this).prop('offsetHeight')/2));
 			}
 			return false;
-		}
-		function tileMouseOver(item){
-			bw(this).addClass('imin');
-			return false;
-		}
-		
+		});
+		//boardstuff			
 		//DEBUG: detect keypress to force premature game state actions	
 		bw(document).keydown(function(e){
 			switch(e.which){
@@ -86,23 +84,7 @@ jQuery.noConflict();
 		 * 
 		 */
 		function checkwhatsover(player,mouse){
-			var _playerAttr = {
-				'Left':bw(player).prop('offsetLeft'),
-				'Top':bw(player).prop('offsetTop'),
-				'Width':bw(player).prop('offsetWidth'),
-				'Height':bw(player).prop('offsetHeight')
-			};
-			
-			var _mouse = {
-				'x':mouse.pageX,
-				'y':mouse.pageY
-			};
-			
 				console.log(player.prop('offsetLeft'));
-				//console.log(_playerAttr.Left);
-				//console.log(_playerAttr.Top);
-				//console.log(_playerAttr.Width);
-				//console.log(_playerAttr.Height);
 			
 			bw('div.row > div').each(function(i,e){
 				//console.log(e.offsetLeft+' '+e.offsetTop);
@@ -112,14 +94,28 @@ jQuery.noConflict();
 					&& mouse.pageX <= (e.offsetLeft+e.offsetWidth) 
 					&& mouse.pageY <= (e.offsetTop+e.offsetHeight)){
 					console.log('yes');
-					bw(player).css({'left':e.offsetLeft,'top':e.offsetTop});
+					
+					//bw(player).css({'left':e.offsetLeft,'top':e.offsetTop});
 					bw(e).prepend(bw(player));
+					moveToParent(player,e);
+					return false;
 				}
 				else{
 					console.log('no');
 				}
 			});
 			
+		}
+		
+		/*woodw
+		 * moveToParent: this should align any absolute moving element to its parent
+		 * 
+		 */
+		function moveToParent(player,parent){
+			console.log(parent);
+			console.log(bw(player).css('left')+'   -----  '+parent.offsetLeft);
+			bw(player).css({'left':parent.offsetLeft,'top':parent.offsetTop});
+			console.log(bw(player).css('left')+'   +++++  '+parent.offsetLeft);
 		}
 		
 		/*woodw
@@ -133,17 +129,18 @@ jQuery.noConflict();
 			
 			for(var i=0;i<players;i++){
 				newRow = bw('<div>',{'class':'row'});
-				newCol = bw('<div>',{'class':'landing tile','html':bw('<img>',{'class':'player','src':'img/player_icon.png','style':'background-color:'+pickColor(i)+';'}).on('mousemove',playerMouseMove(event)).on('click',playerClick(event))});
+				newCol = bw('<div>',{'class':'landing tile','html':bw('<img>',{'class':'player','src':'img/player_icon.png','style':'background-color:'+pickColor(i)+';'})});
 					bw(newRow).append(newCol);
 				for(var j=0;j<turn;j++){
-					newCol = bw('<div>',{'class':'tile'}).on('mouseover',tileMouseOver(event));
+					newCol = bw('<div>',{'class':'tile'});
 					bw(newRow).append(newCol);
 				}
 				bw('div.board').append(newRow);
 			}
 		}
 		
-		/*pickColor: this will allow the teams to have different colors
+		/*woodw
+		 *pickColor: this will allow the teams to have different colors
 		 * number: the team number which returns a switch color
 		 */
 		function pickColor(number){
@@ -181,7 +178,7 @@ jQuery.noConflict();
 			* goes by element child size and not sub child size. 
 		*/
 		function highlightColumn(column){
-			console.log('para: '+column);
+			//console.log('para: '+column);
 			bw('div.row div:nth-child('+(column+1)+')').toggleClass('highlightedTile');
 			bw('div.row div:not(:nth-child('+(column+1)+'))').removeClass('highlightedTile');
 		}
@@ -224,6 +221,11 @@ jQuery.noConflict();
 					}
 					break;
 			}
+			
+			bw('div.tile.highlightedTile > img.player').each(function(i,e){
+				console.log(bw(e).parent());
+				moveToParent(e,bw(e).parent()[0]);
+			});
 		}
 				
 	});
