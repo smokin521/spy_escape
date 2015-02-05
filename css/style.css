@@ -1,26 +1,62 @@
 /*Default classes */
-.board{
-	
-}
-.row{
-	clear:both;
-}
-.tile{
-	float:left;
-	width:100px;
-	height:100px;
-	background-color: gray;
-	margin:2px;
-}
-.landing{
-	float:left;
-	width:100px;
-	height:100px;
-	background-color: blue;
-	margin:2px;	
+body{
+	background-color:#e2e2e2;
 }
 
-/*Event driven classes*/
-.highlightedTile{
-	background-color:red;
+/*shared settings*/
+input, div:not(.board):not(.row){
+	border: 2px solid #2e2e2e;
+    border-radius: 8px;
 }
+img{
+	border: 0px solid #2e2e2e;
+    border-radius: 8px;
+}
+input{
+	padding:7px;
+}
+
+.bubble{
+	box-shadow: 10px 10px 5px #888888;
+	padding-top:10px;
+	padding-bottom:10px;
+	text-align:center;
+}
+
+/*setup window*/
+div.setup{
+	width:250px;
+}
+
+/*board window*/
+div.board{
+	display:none;
+}
+div.row{
+	clear:both;
+}
+div.landing, div.tile{
+	width:100px;
+	height:100px;
+	float:left;
+	margin:2px;
+}
+div.tile{
+	background-color:rgba(0,103,179,.6);
+}
+div.landing{
+	background-color:rgba(0,103,179,.9);
+}
+img.player{
+	width:100px;
+	height:100px;
+	float:left;
+	z-index:20;
+}
+
+/*question window*/
+div.question{
+	display:none;
+}
+
+

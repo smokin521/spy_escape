@@ -5,6 +5,53 @@ jQuery.noConflict();
 (function(bw){	
 	bw(function() {
 		console.log('in the main');
+		var movingplayer=false;
+		
+		
+		//setup stuff
+		bw('div.setup').click(function(){
+			console.log('create the board');
+			if(bw('#player_count').val()!=''&&bw('#turn_count').val()!=''){
+				//console.log(bw('#player_count').val());
+				bw('div.setup > input').fadeOut(100);
+				bw(this).slideUp();
+				buildTheBoard(bw('#player_count').val(),bw('#turn_count').val());
+				bw('div.board').show();
+			}
+			return false;
+		});
+		
+		//boardstuff	
+		//conversion of board stuff
+		function playerClick(item){
+			console.log(item);
+			//console.log(e.offsetX+' '+e.offsetY);
+			console.log('down on the player');
+			//movingplayer=true;
+			bw(this).toggleClass('movable'); //you can list several class names 
+			//console.log(e);
+			if(movingplayer==true){
+				movingplayer = false;
+				checkwhatsover(bw(this),item);
+			}
+			else{
+				movingplayer = true;
+			}
+      		//movingplayer = (movingplayer==true) ? false : true;
+      		console.log(movingplayer);
+      		return false;
+		}
+		function playerMouseMove(item){
+			if(movingplayer){
+				bw('.movable').css({'left':(item.pageX-(bw(this).prop('offsetWidth')/2)),'top':(item.pageY-(bw(this).prop('offsetHeight')/2))});
+				//console.log(e.pageY-(bw(this).prop('offsetHeight')/2));
+			}
+			return false;
+		}
+		function tileMouseOver(item){
+			bw(this).addClass('imin');
+			return false;
+		}
 		
 		//DEBUG: detect keypress to force premature game state actions	
 		bw(document).keydown(function(e){
@@ -34,6 +81,96 @@ jQuery.noConflict();
 					break;
 			}
 		});
+		
+		/*checkwhatsover: need renamed but allows the player tile to drop on top of lower tile
+		 * 
+		 */
+		function checkwhatsover(player,mouse){
+			var _playerAttr = {
+				'Left':bw(player).prop('offsetLeft'),
+				'Top':bw(player).prop('offsetTop'),
+				'Width':bw(player).prop('offsetWidth'),
+				'Height':bw(player).prop('offsetHeight')
+			};
+			
+			var _mouse = {
+				'x':mouse.pageX,
+				'y':mouse.pageY
+			};
+			
+				console.log(player.prop('offsetLeft'));
+				//console.log(_playerAttr.Left);
+				//console.log(_playerAttr.Top);
+				//console.log(_playerAttr.Width);
+				//console.log(_playerAttr.Height);
+			
+			bw('div.row > div').each(function(i,e){
+				//console.log(e.offsetLeft+' '+e.offsetTop);
+
+				if(mouse.pageX >= e.offsetLeft 
+					&& mouse.pageY >= e.offsetTop 
+					&& mouse.pageX <= (e.offsetLeft+e.offsetWidth) 
+					&& mouse.pageY <= (e.offsetTop+e.offsetHeight)){
+					console.log('yes');
+					bw(player).css({'left':e.offsetLeft,'top':e.offsetTop});
+					bw(e).prepend(bw(player));
+				}
+				else{
+					console.log('no');
+				}
+			});
+			
+		}
+		
+		/*woodw
+		buildTheBoard: use the player count and turns to build the grid of divs.
+			players: how many rows to use
+			turn: how many columns
+			*** 
+		*/
+		function buildTheBoard(players, turn){
+			var newRow, newCol;
+			
+			for(var i=0;i<players;i++){
+				newRow = bw('<div>',{'class':'row'});
+				newCol = bw('<div>',{'class':'landing tile','html':bw('<img>',{'class':'player','src':'img/player_icon.png','style':'background-color:'+pickColor(i)+';'}).on('mousemove',playerMouseMove(event)).on('click',playerClick(event))});
+					bw(newRow).append(newCol);
+				for(var j=0;j<turn;j++){
+					newCol = bw('<div>',{'class':'tile'}).on('mouseover',tileMouseOver(event));
+					bw(newRow).append(newCol);
+				}
+				bw('div.board').append(newRow);
+			}
+		}
+		
+		/*pickColor: this will allow the teams to have different colors
+		 * number: the team number which returns a switch color
+		 */
+		function pickColor(number){
+			switch(number){
+				case 0:
+					return 'red';
+					break;
+				case 1:
+					return 'blue';
+					break;
+				case 2:
+					return 'yellow';
+					break;
+				case 3:
+					return 'green';
+					break;
+				case 4:
+					return 'silver';
+					break;
+				case 5:
+					return 'orange';
+					break;
+				case 6:
+					return 'black';
+					break;
+			}
+		}
 		
 		/*woodw
 		highlightColumn: highlight a particular column and remove highlight from everything else.
